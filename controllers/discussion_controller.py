@@ -4,7 +4,7 @@ from typing import List
 from schemas.discussion_schema import DiscussionCreate, DiscussionResponse, ReplyCreate, ReplyResponse
 from services.discussion_service import (
     create_discussion, get_all_discussions_with_usernames,
-    get_discussion_by_id, add_reply
+    add_reply
 )
 from utils.security import get_current_user 
 from models.user_model import User 
