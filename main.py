@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from fastapi.staticfiles import StaticFiles
 from database import init_db
 from controllers import auth_controller
 from controllers import plant_controller
@@ -21,7 +20,6 @@ app.include_router(diagnose_controller.router, prefix="/diagnose", tags=["diagno
 app.include_router(ai_controller.router, prefix="/ai", tags=["ai"])
 app.include_router(discussion_controller.router, prefix="/discussions", tags=["discussions"])
 
-app.mount("/images", StaticFiles(directory="images"), name="images")
 
 app.add_middleware(
     CORSMiddleware,

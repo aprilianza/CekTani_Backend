@@ -6,8 +6,6 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.memory import ConversationBufferMemory
-from langchain.schema import Document
-from typing import List
 
 # Konfigurasi API
 genai.configure(api_key=GEMINI_API_KEY)
@@ -17,7 +15,7 @@ model = genai.GenerativeModel("gemini-2.0-flash")
 
 # Inisialisasi komponen RAG di level global
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-vectorstore = Chroma(persist_directory="chroma_store", embedding_function=embeddings)
+vectorstore = Chroma(persist_directory="services/chroma_store", embedding_function=embeddings)
 retriever = vectorstore.as_retriever()
 
 # Template prompt khusus botani

@@ -1,6 +1,8 @@
 import torch
 from ultralytics import YOLO
 import os
+from PIL import Image
+from io import BytesIO
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(CURRENT_DIR, "best.pt")
@@ -49,16 +51,33 @@ class_name_mapping = {
 device = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
 model = YOLO(MODEL_PATH)
 
-def classify_image(image_path: str):
-    """
-    Lakukan klasifikasi gambar menggunakan model YOLOv8 classification.
-    """
-    results = model.predict(source=image_path, device=device, verbose=False)
-    r = results[0]
 
-    class_index = int(r.probs.top1)
-    confidence = float(r.probs.top1conf)
-    class_name = r.names[class_index]
-    translated_label = class_name_mapping.get(class_name, class_name)
 
-    return translated_label, confidence
+def classify_image_from_bytes(image_bytes: bytes):
+    """
+    Lakukan klasifikasi gambar langsung dari bytes tanpa perlu download/upload.
+    
+    Args:
+        image_bytes: Bytes data dari gambar
+        
+    Returns:
+        tuple: (translated_label, confidence)
+    """
+    try:
+        # Konversi bytes ke PIL Image
+        image = Image.open(BytesIO(image_bytes))
+        
+        # YOLO bisa menerima PIL Image langsung
+        results = model.predict(source=image, device=device, verbose=False)
+        r = results[0]
+
+        class_index = int(r.probs.top1)
+        confidence = float(r.probs.top1conf)
+        class_name = r.names[class_index]
+        translated_label = class_name_mapping.get(class_name, class_name)
+
+        return translated_label, confidence
+    
+    except Exception as e:
+        raise Exception(f"Error in image classification: {str(e)}")
+
