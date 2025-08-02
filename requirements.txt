@@ -11,3 +11,10 @@ ultralytics==8.3.166
 PyJWT==2.10.1
 python-multipart==0.0.20
 passlib==1.7.4
+langchain==0.3.26
+langchain-community==0.3.27
+langchain-core==0.3.68
+langchain-google-genai==2.1.7
+chromadb==1.0.15
+sentence-transformers==5.0.0
+huggingface-hub==0.33.1

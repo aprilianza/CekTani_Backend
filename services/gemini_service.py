@@ -1,5 +1,13 @@
 import google.generativeai as genai
 from config import GEMINI_API_KEY
+from langchain_community.vectorstores import Chroma
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.chains import ConversationalRetrievalChain
+from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain.memory import ConversationBufferMemory
+from langchain.schema import Document
+from typing import List
 
 # Konfigurasi API
 genai.configure(api_key=GEMINI_API_KEY)
@@ -7,12 +15,78 @@ genai.configure(api_key=GEMINI_API_KEY)
 # Inisialisasi model Gemini Flash
 model = genai.GenerativeModel("gemini-2.0-flash")
 
-# Instruction khusus untuk chatbot tanaman
-BOTANICAL_INSTRUCTION = (
-    "Kamu adalah asisten ahli botani. "
-    "Jawablah semua pertanyaan hanya tentang tanaman: budidaya, perawatan, hama, pemupukan, jenis tanaman, dan lainnya. "
-    "Jika pertanyaan tidak terkait tanaman, balas dengan: 'Maaf, saya hanya menjawab tentang tanaman.'"
+# Inisialisasi komponen RAG di level global
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+vectorstore = Chroma(persist_directory="chroma_store", embedding_function=embeddings)
+retriever = vectorstore.as_retriever()
+
+# Template prompt khusus botani
+system_template = """
+Kamu adalah pak tani seorang asisten botani yang membantu menjawab pertanyaan seputar:
+- budidaya tanaman
+- perawatan tanaman
+- pengendalian hama
+- pemupukan
+- jenis tanaman
+
+Kamu diberi potongan informasi dari berbagai dokumen. Jika potongan konteks mengandung informasi yang **relevan dengan pertanyaan**, gunakanlah konteks tersebut untuk menjawab dengan jelas dan akurat.
+
+Jika **tidak ada informasi relevan** di konteks, kamu jawab dengan informasi yang kamu punya yang penting terkait tanaman.
+
+Jika pertanyaannya **tidak berkaitan dengan tanaman atau botani**, balas dengan:
+"Maaf, saya hanya menjawab pertanyaan seputar tanaman."
+
+Berikut konteks yang diberikan:
+{context}
+"""
+
+messages = [
+    SystemMessagePromptTemplate.from_template(system_template),
+    HumanMessagePromptTemplate.from_template("""Riwayat percakapan:
+{chat_history}
+Pengguna: {question}
+Asisten:""")
+]
+prompt = ChatPromptTemplate.from_messages(messages)
+
+# Inisialisasi LLM
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.0-flash",
+    google_api_key=GEMINI_API_KEY,
+    temperature=0.2
 )
+
+# Memory untuk menyimpan riwayat percakapan
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True,
+    output_key="answer"
+)
+
+# Chain untuk RAG
+qa_chain = ConversationalRetrievalChain.from_llm(
+    llm=llm,
+    retriever=retriever,
+    memory=memory,
+    combine_docs_chain_kwargs={"prompt": prompt},
+    return_source_documents=True
+)
+
+def chat_with_bot(user_question: str) -> str:
+    try:
+        # Eksekusi chain
+        result = qa_chain.invoke({
+            "question": user_question,
+            "chat_history": qa_chain.memory.chat_memory.messages
+        })
+        
+        # Dapatkan jawaban
+        bot_response = result["answer"]        
+        
+        return bot_response
+    
+    except Exception as e:
+        print(f"Error di RAG chain: {str(e)}")
 
 def explain_disease(disease_name: str, confidence: float) -> str:
     """Berikan penjelasan tentang penyakit tanaman"""
@@ -24,15 +98,7 @@ def explain_disease(disease_name: str, confidence: float) -> str:
         f"jawab dengan awalan saya 'saya yakin {confidence_percent:.2f}% bahwa penyakit ini adalah {disease_name}'"
         "jika confidence kurang dari 0.5, katakan 'Saya tidak yakin penyakit ini, silakan konsultasikan dengan ahli tanaman.'"
     )
-    chat = model.start_chat()
-    response = chat.send_message(prompt)
-    return response.text
-
-def chat_with_bot(user_question: str) -> str:
-    # Gabungkan instruction + input pengguna
-    full_prompt = f"{BOTANICAL_INSTRUCTION}\n\n{user_question}"
-    chat = model.start_chat()
-    response = chat.send_message(full_prompt)
+    response = model.generate_content(prompt)
     return response.text
 
 def analyze_weather_for_plants(weather_data: dict) -> str:
@@ -63,8 +129,7 @@ def analyze_weather_for_plants(weather_data: dict) -> str:
     """
     
     try:
-        chat = model.start_chat()
-        response = chat.send_message(prompt)
+        response = model.generate_content(prompt)
         return response.text
     except Exception as e:
         return f"Error generating weather analysis: {str(e)}"
