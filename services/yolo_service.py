@@ -5,7 +5,7 @@ from PIL import Image
 from io import BytesIO
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(CURRENT_DIR, "best.pt")
+MODEL_PATH = os.path.join(CURRENT_DIR, "yolo/classification.pt")
 
 class_name_mapping = {
     "Apple___Apple_scab": "Apel - Kudis Apel",

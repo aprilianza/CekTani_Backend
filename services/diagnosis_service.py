@@ -98,3 +98,31 @@ async def diagnose_only(file: UploadFile, user_id: ObjectId):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Diagnosis failed: {str(e)}")
+    
+async def delete_diagnosis(plant_id: str, diagnosis_id: str, user_id: ObjectId) -> dict:
+    plant = await Plant.get(ObjectId(plant_id))
+    if not plant or plant.user_id != user_id:
+        raise HTTPException(status_code=404, detail="Plant not found")
+    
+    # Find the diagnosis to delete
+    diagnosis_to_delete = None
+    for idx, diagnosis in enumerate(plant.diagnosis):
+        if str(diagnosis.id) == diagnosis_id:
+            diagnosis_to_delete = diagnosis
+            break
+    
+    if not diagnosis_to_delete:
+        raise HTTPException(status_code=404, detail="Diagnosis not found")
+    
+    # Delete image from Cloudinary
+    if hasattr(diagnosis_to_delete, 'photo_public_id') and diagnosis_to_delete.photo_public_id:
+        try:
+            cloudinary.uploader.destroy(diagnosis_to_delete.photo_public_id)
+        except Exception as e:
+            print(f"Failed to delete image from Cloudinary {diagnosis_to_delete.photo_public_id}: {e}")
+    
+    # Remove diagnosis from plant
+    plant.diagnosis.pop(idx)
+    await plant.save()
+    
+    return {"detail": "Diagnosis deleted successfully"}

@@ -8,7 +8,7 @@ from config import JWT_SECRET_KEY, JWT_ALGORITHM
 
 SECRET_KEY = JWT_SECRET_KEY
 ALGORITHM = JWT_ALGORITHM
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 720
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

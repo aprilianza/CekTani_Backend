@@ -3,8 +3,8 @@ from typing import List
 
 from schemas.discussion_schema import DiscussionCreate, DiscussionResponse, ReplyCreate, ReplyResponse
 from services.discussion_service import (
-    create_discussion, get_all_discussions_with_usernames,
-    add_reply
+    create_discussion, delete_discussion_by_id, get_all_discussions_with_usernames,
+    add_reply, update_discussion_content
 )
 from utils.security import get_current_user 
 from models.user_model import User 
@@ -76,3 +76,37 @@ async def reply_to_discussion(
         } for r in updated.replies],
         created_at=updated.created_at
     )
+
+
+@router.put("/{discussion_id}", response_model=DiscussionResponse)
+async def update_discussion(
+    discussion_id: str,
+    data: DiscussionCreate,
+    current_user: User = Depends(get_current_user)
+):
+    discussion = await update_discussion_content(discussion_id, current_user.id, data)
+    if not discussion:
+        raise HTTPException(status_code=404, detail="Discussion not found or not authorized")
+    
+    return DiscussionResponse(
+        id=str(discussion.id),
+        user_id=str(discussion.user_id),
+        title=discussion.title,
+        content=discussion.content,
+        replies=[{
+            "user_id": str(r.user_id),
+            "content": r.content,
+            "created_at": r.created_at
+        } for r in discussion.replies],
+        created_at=discussion.created_at
+    )
+
+@router.delete("/{discussion_id}")
+async def delete_discussion(
+    discussion_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    deleted = await delete_discussion_by_id(discussion_id, current_user.id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Discussion not found or not authorized")
+    return {"message": "Discussion deleted successfully"}

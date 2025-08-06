@@ -15,18 +15,18 @@ cloudinary.config(
 )
 
 async def get_all_plants_by_user(user_id: str) -> List[PlantResponse]:
-    plants = await Plant.find(Plant.user_id == user_id).to_list()
+    plants = await Plant.find(Plant.user_id == ObjectId(user_id)).to_list()
     return [map_plant_to_response(p) for p in plants]
 
 async def get_plant_by_id(plant_id: str, user_id: str) -> PlantResponse:
     plant = await Plant.get(ObjectId(plant_id))
-    if not plant or plant.user_id != user_id:
+    if not plant or plant.user_id != ObjectId(user_id):
         raise HTTPException(status_code=404, detail="Plant not found")
     return map_plant_to_response(plant)
 
 async def create_new_plant(data: PlantCreate, user_id: str) -> PlantResponse:
     plant = Plant(
-        user_id=user_id,
+        user_id=ObjectId(user_id),
         name=data.name,
         description=data.description
     )
@@ -35,7 +35,7 @@ async def create_new_plant(data: PlantCreate, user_id: str) -> PlantResponse:
 
 async def delete_plant_by_id(plant_id: str, user_id: str) -> dict:
     plant = await Plant.get(ObjectId(plant_id))
-    if not plant or plant.user_id != user_id:
+    if not plant or plant.user_id != ObjectId(user_id):
         raise HTTPException(status_code=404, detail="Plant not found")
 
     # Hapus gambar dari Cloudinary
@@ -67,3 +67,13 @@ def map_plant_to_response(plant) -> PlantResponse:
         description=plant.description,
         diagnosis=diagnosis_list
     )
+
+async def update_plant(plant_id: str, user_id: str, data: PlantCreate) -> PlantResponse:
+    plant = await Plant.get(ObjectId(plant_id))
+    if not plant or plant.user_id != ObjectId(user_id):
+        raise HTTPException(status_code=404, detail="Plant not found")
+    
+    plant.name = data.name
+    plant.description = data.description
+    await plant.save()
+    return map_plant_to_response(plant)

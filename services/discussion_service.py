@@ -53,3 +53,21 @@ async def get_all_discussions_with_usernames():
         })
     
     return response
+
+async def update_discussion_content(discussion_id: str, user_id: str, data: DiscussionCreate) -> Discussion | None:
+    discussion = await Discussion.get(ObjectId(discussion_id))
+    if not discussion or discussion.user_id != ObjectId(user_id):
+        return None
+    
+    discussion.title = data.title
+    discussion.content = data.content
+    await discussion.save()
+    return discussion
+
+async def delete_discussion_by_id(discussion_id: str, user_id: str) -> bool:
+    discussion = await Discussion.get(ObjectId(discussion_id))
+    if not discussion or discussion.user_id != ObjectId(user_id):
+        return False
+    
+    await discussion.delete()
+    return True

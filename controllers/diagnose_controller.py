@@ -5,7 +5,11 @@ from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
 from bson import ObjectId
 from models.user_model import User
 from models.plant_model import Plant
-from services.diagnosis_service import diagnose_only, process_diagnosis
+from services.diagnosis_service import (
+    diagnose_only, 
+    process_diagnosis, 
+    delete_diagnosis as delete_diagnosis_service 
+)
 from utils.security import get_current_user
 
 router = APIRouter()
@@ -33,3 +37,12 @@ async def diagnose_plant(
     result = await process_diagnosis(plant, file, current_user.id, checked_at)
     return result
 
+# Fixed delete endpoint
+@router.delete("/{plant_id}/{diagnosis_id}")
+async def delete_diagnosis(
+    plant_id: str,
+    diagnosis_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    # Now call the renamed service function
+    return await delete_diagnosis_service(plant_id, diagnosis_id, current_user.id)

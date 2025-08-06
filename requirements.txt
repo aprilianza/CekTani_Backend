@@ -18,3 +18,5 @@ langchain-google-genai==2.1.7
 chromadb==1.0.15
 sentence-transformers==5.0.0
 huggingface-hub==0.33.1
+Pillow==10.3.0          
+cloudinary==1.39.1    
