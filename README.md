@@ -25,8 +25,7 @@ Backend menangani logika bisnis inti, autentikasi, pengelolaan data tanaman, int
 ## **2. Base URL**
 
 ```
-arduino
-CopyEdit
+
 http://localhost:8000
 
 ```
@@ -48,11 +47,10 @@ Semua endpoint kecuali `register` dan `login` membutuhkan **Bearer Token** JWT.
 **Contoh Request Login:**
 
 ```json
-json
-CopyEdit
+
 {
-  "username": "petani1",
-  "password": "password123"
+  "email": "arnold@gmail.com",
+  "password": "user123"
 }
 
 ```
@@ -74,12 +72,10 @@ Mengelola data tanaman.
 **Contoh Request Create Plant:**
 
 ```json
-json
-CopyEdit
+
 {
-  "name": "Padi",
-  "type": "Grain",
-  "description": "Varietas Ciherang"
+  "name": "kentang goreng",
+  "description": "Tanaman kentang milik saya di pekarangan rumah"
 }
 
 ```
@@ -99,10 +95,9 @@ Fitur diagnosis penyakit tanaman berbasis AI.
 **Contoh Request Quick Diagnose:**
 
 ```json
-json
-CopyEdit
 {
-  "image": "base64_image_data_here"
+  "file": "base64_image_data_here"
+  "checked_at": "base64_image_data_here"
 }
 
 ```
@@ -121,10 +116,9 @@ Integrasi AI untuk chatbot dan analisis cuaca.
 **Contoh Request Chatbot:**
 
 ```json
-json
-CopyEdit
+
 {
-  "message": "Bagaimana cara mengatasi hama wereng?"
+  "question": "bagaimana cara mengatasinya?"
 }
 
 ```
@@ -146,11 +140,10 @@ Forum komunitas untuk berdiskusi antar petani.
 **Contoh Request Create Discussion:**
 
 ```json
-json
-CopyEdit
 {
-  "title": "Pengendalian hama ulat grayak",
-  "content": "Ada yang punya pengalaman menangani hama ini?"
+  "title": "Apa penyebab daun menguning?",
+  "content": "Saya melihat daun tanaman cabai saya menguning.",
+  "created_at": "2025-07-31T21:05:00+07:00"
 }
 
 ```
