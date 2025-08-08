@@ -152,10 +152,10 @@ Forum komunitas untuk berdiskusi antar petani.
 ---
 
 ## **8. Instalasi dan Menjalankan Backend**
+Versi python yang kami gunakan 3.12
 
 ```bash
-bash
-CopyEdit
+
 # Clone repository
 git clone https://github.com/username/cek-tani-backend.git
 cd cek-tani-backend
