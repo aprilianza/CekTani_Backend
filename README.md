@@ -14,6 +14,7 @@ Backend menangani logika bisnis inti, autentikasi, pengelolaan data tanaman, int
 - **Database**:
     - **MongoDB** → penyimpanan data pengguna, tanaman, diagnosis, dan forum diskusi.
     - **ChromaDB** → penyimpanan vektor untuk mendukung pencarian semantik di chatbot *Pak Tani* (RAG).
+    - **Cloudinary** → penyimpanan gambar berbasis cloud.
 - **Model AI**:
     - **YOLOv11n** untuk deteksi penyakit tanaman berbasis gambar daun.
     - **Google Gemini** (LLM) untuk asisten virtual berbasis teks.
