@@ -88,19 +88,25 @@ def chat_with_bot(user_question: str) -> str:
 
 def explain_disease(disease_name: str, confidence: float) -> str:
     """Berikan penjelasan tentang penyakit tanaman"""
-    confidence_percent = confidence * 100
-    prompt = (
-        f"Saya mendeteksi penyakit tanaman bernama: {disease_name}. "
-        "Jelaskan penyakit ini, gejalanya, dan bagaimana cara mengatasinya. "
-        "Berikan informasi seakurat mungkin dan seringkas mungkin untuk petani pemula. "
-        f"jawab dengan awalan saya 'saya yakin {confidence_percent:.2f}% bahwa penyakit ini adalah {disease_name}'"
-        "jika confidence kurang dari 0.5, katakan 'Saya tidak yakin penyakit ini, silakan konsultasikan dengan ahli tanaman.'"
-    )
-    response = model.generate_content(prompt)
-    return response.text
+    if confidence < 0.5:
+        response = "Saya tidak yakin penyakit ini, silakan konsultasikan dengan ahli tanaman."
+    elif "Sehat" in disease_name:
+        response = "Tanaman anda sehat."
+    else:
+        confidence_percent = confidence * 100
+        prompt = (
+            f"Saya mendeteksi penyakit tanaman bernama: {disease_name}. "
+            "Jelaskan penyakit ini, gejalanya, dan bagaimana cara mengatasinya. "
+            "Berikan informasi seakurat mungkin dan seringkas mungkin untuk petani pemula. "
+            f"jawab dengan awalan ini jika tanaman tidak sehat 'saya yakin {confidence_percent:.2f}% bahwa penyakit ini adalah {disease_name}'"
+            "jawab 'tanaman anda sehat' jika tanamannya sehat"
+            "jika confidence kurang dari 0.5, katakan 'Saya tidak yakin penyakit ini, silakan konsultasikan dengan ahli tanaman.'"
+        )
+        feedback = model.generate_content(prompt)
+        response = feedback.text
+    return response
 
 def analyze_weather_for_plants(weather_data: dict) -> str:
-    # Prepare the prompt for Gemini
     prompt = f"""
     Anda adalah ahli agronomi dan botani. Berikan analisis cuaca untuk perawatan tanaman berdasarkan data berikut:
     

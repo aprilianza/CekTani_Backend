@@ -45,7 +45,7 @@ class_name_mapping = {
     "Tomato___Target_Spot": "Tomat - Bercak Target",
     "Tomato___Tomato_Yellow_Leaf_Curl_Virus": "Tomat - Virus Keriting Daun Kuning",
     "Tomato___Tomato_mosaic_virus": "Tomat - Virus Mosaic",
-    "Tomato___healthy": "Tomat - Sehat"
+    "Tomato___healthy": "Tomat - Sehat",
 }
 
 device = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
