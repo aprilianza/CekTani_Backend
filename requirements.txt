@@ -14,17 +14,17 @@ pydantic-settings==2.10.1
 PyJWT==2.10.1
 passlib[bcrypt]==1.7.4
 
-# ML/AI - Optimized versions
-torch==2.6.0+cpu --index-url https://download.pytorch.org/whl/cpu
-torchvision==0.21.0+cpu --index-url https://download.pytorch.org/whl/cpu
+# ML/AI - Optimized versions  
+torch==2.6.0
+torchvision==0.21.0
 ultralytics==8.3.166
 opencv-python-headless==4.12.0.88
 Pillow==10.3.0
 
 # LangChain - Core only
 langchain-core==0.3.68
-langchain-google-genai
-google-generativeai
+langchain-google-genai==2.0.10
+google-generativeai==0.8.5
 
 # Embeddings - Lightweight
 sentence-transformers==5.0.0
