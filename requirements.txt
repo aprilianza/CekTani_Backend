@@ -1,22 +1,35 @@
+# Core
 fastapi==0.115.13
 uvicorn==0.34.3
 python-dotenv==1.1.1
-motor==3.7.1
-beanie==1.30.0
 pydantic==2.11.7
-bson==0.5.10 
-google-generativeai
-torch==2.6.0
-ultralytics==8.3.166
-PyJWT==2.10.1
 python-multipart==0.0.20
 passlib==1.7.4
+python-jose==3.3.0
+
+# MongoDB & ODM
+pymongo==4.10.1
+motor==3.7.1
+beanie==1.30.0
+
+# AI / ML
+torch==2.6.0
+ultralytics==8.3.166
+Pillow==10.3.0
+sentence-transformers==5.0.0
+huggingface-hub==0.33.1
+google-generativeai
 langchain==0.3.26
 langchain-community==0.3.27
 langchain-core==0.3.68
 langchain-google-genai
 chromadb==1.0.15
-sentence-transformers==5.0.0
-huggingface-hub==0.33.1
-Pillow==10.3.0          
-cloudinary==1.39.1    
+
+# Auth & Security
+PyJWT==2.10.1
+
+# Cloud Storage
+cloudinary==1.39.1
+
+# Utilities
+typing-extensions>=4.0.0
