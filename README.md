@@ -152,7 +152,7 @@ Forum komunitas untuk berdiskusi antar petani.
 ---
 
 ## **8. Instalasi dan Menjalankan Backend**
-Versi python yang kami gunakan 3.12
+A. Lokal (Versi python yang kami gunakan 3.12)
 
 ```bash
 
@@ -172,7 +172,45 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 
 ```
+### **B. Menjalankan dengan Docker**
 
+### **I. Build Image**
+
+```bash
+
+docker build -t cektani-backend .
+
+```
+
+### **II. Menjalankan Container (siapkan .env yang disediakan di gdrive)**
+
+```bash
+
+docker run -d --name cektani-container -p 8000:8000 --env-file .env cektani-backend
+
+```
+
+---
+
+### **III. Akses API**
+
+Setelah container jalan, API tersedia di:
+
+```
+
+http://localhost:8000
+
+```
+
+---
+
+### **IV. Menghentikan Container**
+
+```bash
+
+docker stop cektani-api && docker rm cektani-api
+
+```
 ---
 
 ## **9. Environment Variables**
