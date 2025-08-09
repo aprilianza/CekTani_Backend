@@ -204,14 +204,6 @@ http://localhost:8000
 
 ---
 
-### **IV. Menghentikan Container**
-
-```bash
-
-docker stop cektani-api && docker rm cektani-api
-
-```
----
 
 ## **9. Environment Variables**
 
