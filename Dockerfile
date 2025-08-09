@@ -4,12 +4,6 @@ FROM python:3.11-slim
 # Set workdir di container
 WORKDIR /app
 
-# Install dependency sistem yang dibutuhkan (misal Pillow, PyTorch)
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libgl1 \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements.txt
 COPY requirements.txt .
