@@ -172,7 +172,7 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 
 ```
-### **B. Menjalankan dengan Docker**
+### **B. Menjalankan dengan Docker (Paling aman)**
 
 ### **I. Build Image**
 
