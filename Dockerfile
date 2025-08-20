@@ -4,7 +4,7 @@ FROM python:3.11-slim
 # Set workdir di container
 WORKDIR /app
 
-# Install dependency sistem yang dibutuhkan (misal Pillow, PyTorch)
+# Install dependency sistem yang dibutuhkan
 RUN apt-get update && apt-get install -y \
     build-essential \
     libgl1 \
@@ -20,8 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy semua file project ke container
 COPY . .
 
-# Expose port FastAPI
 EXPOSE 8000
 
-# Jalankan server
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Jalankan server pakai env PORT
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]
